@@ -20,7 +20,13 @@ window.CONTENT = {
   },
 
   // Folder colors match the clear-plastic palette. Short blurbs are drafts — edit freely.
+  // url is optional: leave it out and the window just won't show an "open project" button.
   projects: [
+    { id: 'bearly', title: 'bearly spent', color: '#f59a6b', tags: ['React', 'Vite', 'UI/UX'],
+      blurb: 'Cal Hacks 2026: a financial literacy app for kids 7–12 and their parents. I led the frontend and UI/UX, building 30 interactive lessons, visual savings goals and parent approvals for rewards and purchases.',
+      url: 'https://40-114-68-113.sslip.io' },
+    { id: 'fertility', title: 'fertility grove privacy review', color: '#7cc7d9', tags: ['security', 'HIPAA', 'privacy'],
+      blurb: "With UC Berkeley's Public Interest Cybersecurity Clinic: briefed a client on HIPAA and the privacy risks of storing medical records in a fertility support app, and helped scope a review of its data collection, third-party services and what matched users can see about each other." },
     { id: 'audio', title: 'hand-controlled audio player', color: '#f2c14e', tags: ['OpenCV', 'audio', 'web'],
       blurb: 'Play, pause and scrub audio forwards and backwards just by moving your hand in front of the camera.',
       url: 'https://waleung1231.github.io/Hand-Controlled-Bidirectional-Audio-Player/' },
@@ -36,6 +42,9 @@ window.CONTENT = {
     { id: 'bitcoin', title: 'bitcoin sentiment analysis', color: '#a48be6', tags: ['Python', 'NLP'],
       blurb: 'Reading the mood of Bitcoin conversations with sentiment analysis.',
       url: 'https://github.com/waleung1231/Bitcoin-Sentiment-Analysis' },
+    { id: 'rviz', title: 'R data analysis', color: '#e3b8f0', tags: ['R', 'ggplot2', 'EDA'],
+      blurb: 'A collection of exploratory data analysis and statistical visualization projects in R with ggplot2.',
+      url: 'https://drive.google.com/drive/folders/1KrThKEpS86amMnEu95gzrb7O2AnmHDZQ' },
   ],
 
   // Each role is a "track" on the CD. len is just the fake track length shown on the LCD.

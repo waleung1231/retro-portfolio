@@ -161,7 +161,7 @@
         <div class="pw-head" style="--c:${p.color}"><span class="pw-num">${pad2(i + 1)}</span><h3 class="dec-mount"></h3></div>
         <p class="pw-blurb"></p>
         <div class="pw-tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div>
-        <a class="pw-open" href="${esc(p.url)}" target="_blank" rel="noopener">open project ↗</a>
+        ${p.url ? `<a class="pw-open" href="${esc(p.url)}" target="_blank" rel="noopener">open project ↗</a>` : ''}
       </div>`,
     }, host);
     // React Bits DecryptedText for the title, GSAP ScrambleText for the blurb
