@@ -1,46 +1,59 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Retro Portfolio Preview</title>
-  <meta name="description" content="A retro, hand-drawn portfolio you can poke around in.">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Emma's Desk</title>
+  <meta name="description" content="A Y2K desk you can poke around in: open the CD player, flip open the phone, dive into the computer.">
   <link rel="icon" href="assets/deck/pixel-heart.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Pixelify+Sans:wght@400;600&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/common.css">
-  <link rel="stylesheet" href="vendor/reactbits.bundle.css">
-  <link rel="stylesheet" href="css/site.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Pixelify+Sans:wght@400;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/desk.bundle.css">
+  <link rel="stylesheet" href="css/desk.css">
+</head>
+<body>
+  <div id="defs"></div>
 
-
-  <header class="menubar" id="menubar">
-    <span class="logo" id="siteName">✿ portfolio</span>
+  <header class="menubar">
+    <span class="logo">✿ emma's desk</span>
     <nav id="menu" aria-label="Pages"></nav>
     <span class="grow"></span>
-    <a href="editor.html" style="font:inherit;color:inherit;padding:3px 9px">✎ editor</a>
-    <button id="replay" title="Replay the intro">↺ intro</button>
+    <button id="lampBtn" title="Lamp on / off" aria-label="Toggle the desk lamp" aria-pressed="false">💡</button>
+    <button id="soundBtn" title="Sound on / off" aria-label="Sound"></button>
     <time id="clock"></time>
   </header>
 
   <main class="viewport" id="viewport">
-    <div class="stage" id="stage" aria-live="polite"></div>
+    <div id="sizer">
+      <div id="cam">
+        <div id="stage" class="stage" aria-label="My desk. Click things to explore."></div>
+      </div>
+    </div>
   </main>
 
-  <div class="tip" id="tip" hidden></div>
-  <div class="badge" id="badge" hidden>preview · live from the editor</div>
+  <p class="hint" id="hint">click things on my desk ✿ the computer, CD player, notebook &amp; phone open up</p>
 
-  <section class="intro" id="intro" aria-label="Intro" hidden>
-    <div class="intro-window" id="introWindow">
-      <div class="titlebar"><span class="box"></span><span class="lines"></span><b>welcome.exe</b><span class="lines"></span><span class="box"></span></div>
-      <h1 class="word" id="word"></h1>
-      <p class="boot" id="boot"></p>
-      <p class="enter">click anywhere to enter ▸</p>
+  <div class="loader" id="loader">
+    <div class="loader-win">
+      <div class="titlebar"><i></i><b>desk.exe</b><i></i></div>
+      <div class="loader-body">
+        <div class="loader-text" id="loaderText"></div>
+        <div class="loader-track"><div class="loader-bar" id="loaderBar"></div></div>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <div id="sparks" class="sparks" aria-hidden="true"></div>
 
   <noscript><p style="padding:20px;font-family:monospace">This portfolio needs JavaScript turned on.</p></noscript>
 
-  <script src="vendor/reactbits.bundle.js"></script>
-  <script src="assets/deck/manifest.js"></script>
-  <script src="js/store.js"></script>
-  <script src="js/starter.js"></script>
-  <script src="js/render.js"></script>
-  <script src="js/site.js"></script>
-
-</body></html>
+  <script src="vendor/desk.bundle.js"></script>
+  <script src="js/desk/content.js"></script>
+  <script src="js/desk/sound.js"></script>
+  <script src="js/desk/art.js"></script>
+  <script src="js/desk/scene.js"></script>
+  <script src="js/desk/pages.js"></script>
+  <script src="js/desk/main.js"></script>
+</body>
+</html>

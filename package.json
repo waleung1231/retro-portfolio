@@ -1,7 +1,7 @@
 {
   "name": "retro-desk-portfolio",
   "private": true,
-  "description": "Builds vendor/desk.bundle.js (GSAP + React Bits components) for desk.html",
+  "description": "Builds vendor/desk.bundle.js (GSAP + React Bits components) for index.html (the desk)",
   "scripts": {
     "build": "esbuild src/bundle.jsx --bundle --minify --format=iife --target=es2019 --jsx=automatic --loader:.js=jsx --define:process.env.NODE_ENV='\"production\"' --outfile=vendor/desk.bundle.js"
   },
