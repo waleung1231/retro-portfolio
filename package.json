@@ -1,0 +1,18 @@
+{
+  "name": "retro-desk-portfolio",
+  "private": true,
+  "description": "Builds vendor/desk.bundle.js (GSAP + React Bits components) for desk.html",
+  "scripts": {
+    "build": "esbuild src/bundle.jsx --bundle --minify --format=iife --target=es2019 --jsx=automatic --loader:.js=jsx --define:process.env.NODE_ENV='\"production\"' --outfile=vendor/desk.bundle.js"
+  },
+  "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "^3.15.0",
+    "motion": "^12.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

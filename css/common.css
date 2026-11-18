@@ -1,0 +1,34 @@
+/* Shared look: muted pastel doodle + pixel OS. */
+:root {
+  --ink: #4a4049;
+  --paper: #f4ecdc;
+  --cream: #faf5ea;
+  --pink: #e3b9b2;
+  --rose: #cf9a97;
+  --sage: #b9c9a8;
+  --moss: #8fa58a;
+  --butter: #ecdba0;
+  --blue: #aebfcd;
+  --denim: #8199ae;
+  --lav: #c7b9d4;
+  --plum: #9d8aa8;
+  --teal: #a3c4bc;
+  --beige: #dccfb9;
+  --gray: #bdb3a8;
+  --pixel: 'Pixelify Sans', 'VT323', monospace;
+  --doodle: 'Gaegu', 'Chalkboard SE', 'Comic Sans MS', cursive;
+  --plain: 'Nunito', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--plain); }
+
+/* Elements (same markup in the editor and on the site) */
+.stage { position: relative; width: 1440px; height: 900px; background-size: cover; background-position: center; overflow: hidden; transform-origin: 0 0; }
+.el { position: absolute; }
+.el-inner { width: 100%; height: 100%; transform-origin: 50% 50%; }
+.el img { width: 100%; height: 100%; object-fit: contain; display: block; user-select: none; -webkit-user-drag: none; }
+.el img[src$=".svg"][src*="pixel"] { image-rendering: pixelated; }
+.el-text { width: 100%; height: 100%; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.15; outline: none; }
+.el.missing .el-inner { outline: 2px dashed var(--rose); }
