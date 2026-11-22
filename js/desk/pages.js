@@ -35,6 +35,16 @@
   }
 
   // ================================================================== PROJECTS
+  // Two levels: the CRT desktop shows one folder per topic; opening a topic shows an explorer
+  // window listing its projects; picking a project opens its detail window (one per project id).
+  const TOPICS = C.topics
+    .map((t) => ({ ...t, projects: C.projects.filter((p) => t.id === 'all' || (p.topics || []).includes(t.id)) }))
+    .filter((t) => t.projects.length);
+  const short = (s, n = 13) => (s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s);
+  const glyph = (color) => `<svg class="ex-glyph" viewBox="0 0 26 22" width="30" height="26" aria-hidden="true"><path d="M2 5a2 2 0 0 1 2-2h6l2.4 2.4H22a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="${esc(color)}" stroke="#2b3a67" stroke-width="1.8" stroke-linejoin="round"/><path d="M2 9H24" stroke="#2b3a67" stroke-width="1.4" opacity=".45"/></svg>`;
+  /** A window that is not already on its way out. */
+  const liveWin = (id) => $(`.win[data-id="${id}"]:not(.closing)`, built.projects);
+
   function buildProjects() {
     const page = el(`<section class="page page-projects" aria-label="Projects" hidden>
       <div class="crt">
@@ -44,8 +54,8 @@
           <path d="M0 740Q500 680 1600 720" stroke="#c4e68f" stroke-width="8" fill="none" opacity=".5"/>`, 'preserveAspectRatio="xMidYMid slice"')}</div>
         <div class="os-title"><span class="glitch-mount"></span></div>
         <div class="icons">
-          ${C.projects.map((p, i) => `<div class="proj" data-i="${i}" title="${esc(p.title)}">
-            <div class="folder-mount"></div><span class="proj-label">${esc(p.title)}</span></div>`).join('')}
+          ${TOPICS.map((t) => `<div class="proj proj-topic" data-t="${esc(t.id)}" title="${esc(t.title)}: ${t.projects.length} project${t.projects.length === 1 ? '' : 's'}">
+            <div class="folder-mount"></div><span class="proj-label">${esc(t.title)} <span class="proj-count">(${t.projects.length})</span></span></div>`).join('')}
           <a class="proj proj-link" href="https://github.com/waleung1231" target="_blank" rel="noopener"><div class="globe">${Art.svg(48, 48, `<circle cx="24" cy="24" r="20" fill="#cfe6ff" stroke="#2b3a67" stroke-width="2.4"/><ellipse cx="24" cy="24" rx="9" ry="20" fill="none" stroke="#2b3a67" stroke-width="2"/><path d="M4 24H44M7 13H41M7 35H41" stroke="#2b3a67" stroke-width="2"/>`)}</div><span class="proj-label">more on github ↗</span></a>
         </div>
         <div class="windows"></div>
@@ -68,11 +78,26 @@
 
     RB.mount($('.glitch-mount', page), 'GlitchText', { children: 'projects.exe', speed: 0.8, enableShadows: true, enableOnHover: true, className: 'os-glitch' });
 
-    C.projects.forEach((p, i) => {
-      const host = $(`.proj[data-i="${i}"]`, page);
-      const papers = [p.tags[0] || '', p.tags[1] || '', p.tags[2] || '★'].map((t) => RB.html(`<span>${esc(t)}</span>`, 'paper-tag'));
-      RB.mount($('.folder-mount', host), 'Folder', { color: p.color, size: 0.9, items: papers });
-      host.addEventListener('click', () => toggleWindow(i, host));
+    TOPICS.forEach((t, ti) => {
+      const host = $(`.proj-topic[data-t="${t.id}"]`, page);
+      const papers = t.projects.slice(0, 3).map((p) => RB.html(`<span>${esc(short(p.title))}</span>`, 'paper-tag'));
+      RB.mount($('.folder-mount', host), 'Folder', { color: t.color, size: 0.9, items: papers });
+      // The React Bits Folder owns its open/closed state (mouse click or Enter/Space on it).
+      // After it toggles we read its class and open/close the explorer window to match.
+      const sync = () => requestAnimationFrame(() => {
+        const folder = $('.folder', host);
+        const isOpen = !!folder && folder.classList.contains('open');
+        const w = liveWin('t-' + t.id);
+        if (isOpen && !w) openTopic(t, ti, host);
+        else if (!isOpen && w) closeWin(w);
+      });
+      host.addEventListener('click', (e) => {
+        const folder = $('.folder', host);
+        // a click on the label: press the folder itself, whose own click will bubble back here
+        if (folder && !folder.contains(e.target)) { folder.click(); return; }
+        sync();
+      });
+      host.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.folder')) sync(); });
     });
 
     // start menu
@@ -82,7 +107,7 @@
       const open = menu.hidden;
       menu.hidden = !open;
       start.setAttribute('aria-expanded', open);
-      if (open) gsap.from($$('button, hr', menu), { x: -20, autoAlpha: 0, stagger: 0.04, duration: 0.25 });
+      if (open && !reduced()) gsap.from($$('button, hr', menu), { x: -20, autoAlpha: 0, stagger: 0.04, duration: 0.25 });
     });
     page.addEventListener('click', () => { menu.hidden = true; start.setAttribute('aria-expanded', false); });
     $$('[data-go]', menu).forEach((b) => b.addEventListener('click', () => go(b.dataset.go)));
@@ -99,7 +124,7 @@
     if (w._typed) return;
     w._typed = true;
     RB.mount($('.type-mount', w), 'TextType', {
-      text: ["hi! these folders are things I've built.\nclick one to open it ✿", 'tip: drag windows around by their title bar.'],
+      text: ['hi! my projects are sorted into folders by topic.\nopen one, then pick a project ✿', 'tip: drag windows around by their title bar.'],
       typingSpeed: 38, pauseDuration: 2400, loop: true, cursorCharacter: '▌', className: 'win-type',
     });
   }
@@ -108,14 +133,14 @@
   function openWin(o, fromNode) {
     const page = built.projects;
     const wins = $('.windows', page);
-    const existing = $(`.win[data-id="${o.id}"]`, wins);
+    const existing = liveWin(o.id);
     if (existing) { focus(existing); return existing; }
-    const w = el(`<div class="win" data-id="${o.id}" role="dialog" aria-label="${esc(o.title)}">
+    const w = el(`<div class="win${o.cls ? ' ' + o.cls : ''}" data-id="${esc(o.id)}" role="dialog" aria-label="${esc(o.title)}">
       <div class="win-bar"><span class="win-dots"><i></i><i></i><i></i></span><b>${esc(o.title)}</b><button class="win-x" aria-label="Close">✕</button></div>
       <div class="win-body">${o.body}</div></div>`);
     wins.append(w);
     const pr = page.getBoundingClientRect();
-    const ww = Math.min(440, pr.width - 24);
+    const ww = Math.min(o.width || 440, pr.width - 24);
     const narrow = pr.width < 700;
     gsap.set(w, { left: narrow ? (pr.width - ww) / 2 : Math.max(12, Math.min(pr.width - ww - 12, pr.width * o.x)), top: narrow ? pr.height * (o.id === 'welcome' ? 0.66 : 0.18) : Math.max(56, pr.height * o.y), width: ww });
     focus(w);
@@ -124,12 +149,13 @@
     $('.win-x', w).addEventListener('click', (e) => { e.stopPropagation(); closeWin(w); });
 
     // taskbar button
-    const task = el(`<button class="task" data-id="${o.id}">${esc(o.title)}</button>`);
+    const task = el(`<button class="task" data-id="${esc(o.id)}">${esc(o.title)}</button>`);
     task.addEventListener('click', () => focus(w));
     $('.tasks', page).append(task);
-    gsap.from(task, { y: 30, duration: 0.3, ease: 'back.out(2)' });
+    w._task = task;
 
     if (reduced()) return w;
+    gsap.from(task, { y: 30, duration: 0.3, ease: 'back.out(2)' });
     if (fromNode) {
       const f = rectOf(fromNode);
       gsap.from(w, Object.assign(fromRect(w, f), { autoAlpha: 0, duration: 0.5, ease: 'back.out(1.4)', clearProps: 'scale' }));
@@ -139,36 +165,83 @@
     return w;
   }
   function focus(w) { w.style.zIndex = ++zTop; $$('.win', w.parentNode).forEach((x) => x.classList.toggle('focused', x === w)); Sound.click(); }
-  function closeWin(w) {
+
+  /** Where a closing window should shrink back to: its topic icon, or the project row it came from. */
+  function homeOf(w) {
     const id = w.dataset.id;
-    const task = $(`.task[data-id="${id}"]`, built.projects);
-    const proj = id.startsWith('p') ? $(`.proj[data-i="${id.slice(1)}"]`, built.projects) : null;
-    const folder = proj && $('.folder.open', proj);
-    if (folder) folder.click(); // close the React Bits folder too
-    gsap.to(w, Object.assign(proj && !reduced() ? (() => { const f = rectOf(proj), t = rectOf(w); return { x: '+=' + (f.cx - t.cx), y: '+=' + (f.cy - t.cy), scale: 0.1 }; })() : { scale: 0.8 },
-      { autoAlpha: 0, duration: 0.35, ease: 'power2.in', onComplete: () => { w.remove(); if (task) task.remove(); } }));
+    const page = built.projects;
+    if (id.startsWith('t-')) return $(`.proj-topic[data-t="${id.slice(2)}"]`, page);
+    if (id.startsWith('p-')) {
+      const pid = id.slice(2);
+      const alive = (row) => row && row.isConnected && !row.closest('.win.closing');
+      if (alive(w._from)) return w._from;
+      return $$(`.win:not(.closing) .ex-row[data-p="${pid}"]`, page)[0] || null;
+    }
+    return null;
   }
 
-  function toggleWindow(i, host) {
-    const page = built.projects;
-    const open = $(`.win[data-id="p${i}"]`, page);
-    if (open) { closeWin(open); return; }
-    const p = C.projects[i];
+  function closeWin(w) {
+    if (w.classList.contains('closing')) return;
+    w.classList.add('closing'); // later look-ups (liveWin) skip it while it animates out
+    const id = w.dataset.id;
+    const task = w._task || $(`.task[data-id="${id}"]`, built.projects);
+    const done = () => { w.remove(); if (task) task.remove(); };
+    if (id.startsWith('t-')) {
+      // keep the React Bits folder in sync: close it if the window was closed some other way (✕, exit)
+      const folder = $(`.proj-topic[data-t="${id.slice(2)}"] .folder.open`, built.projects);
+      if (folder) folder.click();
+    }
+    if (id.startsWith('p-')) $$(`.ex-row[data-p="${id.slice(2)}"]`, built.projects).forEach((r) => { r.classList.remove('on'); r.removeAttribute('aria-current'); });
+    if (reduced()) { done(); return; }
+    const home = homeOf(w);
+    const to = home ? (() => { const f = rectOf(home), t = rectOf(w); return { x: '+=' + (f.cx - t.cx), y: '+=' + (f.cy - t.cy), scale: 0.1 }; })() : { scale: 0.8 };
+    gsap.to(w, Object.assign(to, { autoAlpha: 0, duration: 0.35, ease: 'power2.in', onComplete: done }));
+  }
+
+  /** Level 2: the explorer window for one topic, listing its projects as rows. */
+  function openTopic(t, ti, host) {
     Sound.pop();
     const w = openWin({
-      id: 'p' + i, title: p.title.replace(/\s+/g, '_') + '.exe', x: 0.36 + (i % 3) * 0.06, y: 0.14 + (i % 2) * 0.08,
+      id: 't-' + t.id, title: t.title.replace(/\s+/g, '_') + '/', cls: 'win-explorer', width: 400,
+      x: 0.26 + (ti % 3) * 0.05, y: 0.12 + (ti % 2) * 0.06,
+      body: `<div class="explorer" style="--c:${esc(t.color)}">
+        <div class="ex-path"><span>C:\\projects\\${esc(t.id)}</span><span>${t.projects.length} item${t.projects.length === 1 ? '' : 's'}</span></div>
+        <div class="ex-list" role="list">${t.projects.map((p) => `<div role="listitem"><button class="ex-row" data-p="${esc(p.id)}" style="--pc:${esc(p.color)}">
+          ${glyph(p.color)}<span class="ex-text"><span class="ex-title">${esc(p.title)}</span><span class="ex-tags">${p.tags.map(esc).join(' · ')}</span></span>
+          <span class="ex-open" aria-hidden="true">›</span></button></div>`).join('')}</div>
+      </div>`,
+    }, host);
+    $$('.ex-row', w).forEach((row) => {
+      if (liveWin('p-' + row.dataset.p)) { row.classList.add('on'); row.setAttribute('aria-current', 'true'); }
+      row.addEventListener('click', () => openProject(row.dataset.p, row));
+    });
+    if (!reduced()) gsap.from($$('.ex-row', w), { x: -14, autoAlpha: 0, stagger: 0.05, delay: 0.25, duration: 0.3, ease: 'power2.out' });
+  }
+
+  /** Level 3: the project detail window. Keyed by project id, so two folders share one window. */
+  function openProject(pid, row) {
+    const i = C.projects.findIndex((p) => p.id === pid);
+    if (i < 0) return;
+    const p = C.projects[i];
+    const existing = liveWin('p-' + pid);
+    if (existing) { existing._from = row; focus(existing); return; }
+    Sound.pop();
+    const w = openWin({
+      id: 'p-' + pid, title: p.title.replace(/\s+/g, '_') + '.exe', x: 0.46 + (i % 3) * 0.05, y: 0.16 + (i % 2) * 0.08,
       body: `<div class="proj-win">
-        <div class="pw-head" style="--c:${p.color}"><span class="pw-num">${pad2(i + 1)}</span><h3 class="dec-mount"></h3></div>
+        <div class="pw-head" style="--c:${esc(p.color)}"><span class="pw-num">${pad2(i + 1)}</span><h3 class="dec-mount"></h3></div>
         <p class="pw-blurb"></p>
         <div class="pw-tags">${p.tags.map((t) => `<span>${esc(t)}</span>`).join('')}</div>
         ${p.url ? `<a class="pw-open" href="${esc(p.url)}" target="_blank" rel="noopener">open project ↗</a>` : ''}
       </div>`,
-    }, host);
+    }, row);
+    w._from = row;
+    $$(`.ex-row[data-p="${pid}"]`, built.projects).forEach((r) => { r.classList.add('on'); r.setAttribute('aria-current', 'true'); });
     // React Bits DecryptedText for the title, GSAP ScrambleText for the blurb
     RB.mount($('.dec-mount', w), 'DecryptedText', { text: p.title, animateOn: 'view', speed: 40, maxIterations: 14, sequential: true, revealDirection: 'start', characters: '▓▒░█<>/\\*#01', className: 'dec-on', encryptedClassName: 'dec-off' });
     const blurb = $('.pw-blurb', w);
-    if (reduced()) blurb.textContent = p.blurb;
-    else gsap.to(blurb, { duration: 1.2, delay: 0.35, scrambleText: { text: p.blurb, chars: 'lowerCase', speed: 0.6, revealDelay: 0.2 } });
+    if (reduced()) { blurb.textContent = p.blurb; return; }
+    gsap.to(blurb, { duration: 1.2, delay: 0.35, scrambleText: { text: p.blurb, chars: 'lowerCase', speed: 0.6, revealDelay: 0.2 } });
     gsap.from($$('.pw-tags span, .pw-open', w), { y: 12, autoAlpha: 0, stagger: 0.07, delay: 0.6, duration: 0.35, ease: 'back.out(2)' });
   }
 

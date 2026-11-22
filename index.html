@@ -5,12 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Emma's Desk</title>
   <meta name="description" content="A Y2K desk you can poke around in: open the CD player, flip open the phone, dive into the computer.">
+  <script>
+    // ?view=simple jumps straight to the recruiter view before the desk loads
+    if (/[?&]view=simple(&|$)/.test(location.search)) location.replace('simple.html' + location.hash);
+  </script>
   <link rel="icon" href="assets/deck/pixel-heart.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Pixelify+Sans:wght@400;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="vendor/desk.bundle.css">
   <link rel="stylesheet" href="css/desk.css">
+  <link rel="stylesheet" href="css/chooser.css">
 </head>
 <body>
   <div id="defs"></div>
@@ -19,6 +24,7 @@
     <span class="logo">✿ emma's desk</span>
     <nav id="menu" aria-label="Pages"></nav>
     <span class="grow"></span>
+    <a id="simpleBtn" href="simple.html" title="Simple view for recruiters" aria-label="Simple view for recruiters">📄<span class="simple-label"> simple view</span></a>
     <button id="lampBtn" title="Lamp on / off" aria-label="Toggle the desk lamp" aria-pressed="false">💡</button>
     <button id="soundBtn" title="Sound on / off" aria-label="Sound"></button>
     <time id="clock"></time>

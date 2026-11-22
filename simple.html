@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emma Leung · Portfolio</title>
+  <meta name="description" content="Wan-Rong (Emma) Leung: data science, hardware and people. Experience, education, skills and projects in one simple page.">
+  <link rel="icon" href="assets/deck/pixel-heart.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/simple.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <h1 id="name">Emma Leung</h1>
+      <nav class="header-links" aria-label="Profiles">
+        <ul id="contact-links"></ul>
+      </nav>
+      <a class="desk-link" href="index.html?view=desk">✿ switch to the interactive desk</a>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+    <section id="about" aria-labelledby="about-h">
+      <h2 id="about-h">About</h2>
+      <div id="about-body"></div>
+      <div class="about-grid">
+        <div>
+          <h3>Education</h3>
+          <ul class="edu" id="edu-list"></ul>
+        </div>
+        <div>
+          <h3>Skills</h3>
+          <ul class="chips static" id="skills"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience" aria-labelledby="exp-h">
+      <h2 id="exp-h">Experience</h2>
+      <ol class="jobs" id="jobs"></ol>
+    </section>
+
+    <section id="projects" aria-labelledby="proj-h">
+      <h2 id="proj-h">Projects</h2>
+      <div class="filters" role="group" aria-label="Filter projects by topic" id="filters"></div>
+      <p class="sr-only" aria-live="polite" id="filter-status"></p>
+      <ul class="cards" id="cards"></ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>More code and experiments on <a href="https://github.com/waleung1231">github.com/waleung1231</a>.</p>
+    </div>
+  </footer>
+
+  <noscript><p class="wrap">This page needs JavaScript to list its content. Visit <a href="https://github.com/waleung1231">github.com/waleung1231</a>.</p></noscript>
+
+  <script src="js/desk/content.js"></script>
+  <script src="js/simple.js"></script>
+</body>
+</html>

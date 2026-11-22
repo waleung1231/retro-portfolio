@@ -185,6 +185,26 @@ body.is-night .menubar #lampBtn { background: var(--butter); }
 .pw-open { display: inline-block; font: 600 16px var(--pixel); color: #fff; background: var(--blue-2); border: 2.5px solid var(--ink); border-radius: 8px; padding: 6px 14px; text-decoration: none; box-shadow: 3px 3px 0 var(--ink); }
 .pw-open:hover { box-shadow: 5px 5px 0 var(--ink); background: #4a72d4; }
 
+/* ---- topic folders (two-level): topic icons on the desktop, explorer windows listing projects ---- */
+.proj-count { opacity: .8; font-weight: 400; }
+.win.closing { pointer-events: none; }
+.win-explorer .win-body { padding: 0; }
+.explorer { display: flex; flex-direction: column; max-height: 60vh; }
+.ex-path { flex: none; display: flex; justify-content: space-between; gap: 10px; padding: 6px 12px; font: 600 12px var(--pixel); color: var(--ink-soft); background: #f1e8d3; border-bottom: 2px solid var(--ink); border-left: 8px solid var(--c); }
+.ex-path span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-list { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ex-row { width: 100%; display: flex; align-items: center; gap: 10px; text-align: left; padding: 7px 10px; border: 2px solid transparent; border-radius: 8px; background: none; color: var(--ink); cursor: pointer; font: inherit; }
+.ex-row:hover, .ex-row:focus-visible { background: var(--ice); border-color: var(--ink); outline: none; }
+.ex-row.on { background: color-mix(in srgb, var(--pc) 28%, #fff); border-color: var(--ink); }
+.ex-glyph { flex: none; transition: transform .2s; }
+.ex-row:hover .ex-glyph { transform: translateY(-2px) rotate(-6deg); }
+.ex-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ex-title { font: 600 15px/1.15 var(--pixel); }
+.ex-tags { font: 11px var(--pixel); color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-open { font: 600 18px var(--pixel); color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) { .ex-glyph { transition: none; } .ex-row:hover .ex-glyph { transform: none; } }
+@media (max-width: 900px) { .explorer { max-height: 55vh; } .ex-row { padding: 9px 10px; } }
+
 .taskbar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 30; height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: linear-gradient(#f8f2e2, #e5d8ba); border-top: 2.5px solid var(--ink); font: 600 14px var(--pixel); }
 .start { border: 2.5px solid var(--ink); background: linear-gradient(var(--blue), var(--blue-2)); color: #fff; border-radius: 8px; padding: 4px 14px; cursor: pointer; box-shadow: 2px 2px 0 var(--ink); }
 .start-menu { position: absolute; left: 10px; bottom: 52px; min-width: 200px; display: flex; flex-direction: column; background: var(--cream); border: 2.5px solid var(--ink); border-radius: 10px; box-shadow: 5px 5px 0 var(--ink); padding: 6px; }
